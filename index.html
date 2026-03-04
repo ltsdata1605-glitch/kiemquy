@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KIỂM QUỸ - CỤM 910</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      /* Styles for html2canvas image export */
+      #printable-area.is-exporting {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      #printable-area.is-exporting .bg-slate-50,
+      #printable-area.is-exporting .bg-slate-100,
+      #printable-area.is-exporting .bg-slate-200 {
+          background-color: transparent !important;
+      }
+      #printable-area.is-exporting .border-l-4 {
+          border-left-color: transparent !important;
+      }
+
+      @media print {
+        @page {
+          size: 80mm auto; /* Khổ giấy cho máy in bill */
+          margin: 3mm;
+        }
+
+        body {
+          background: #fff;
+          font-size: 9pt;
+        }
+
+        /* Ẩn tất cả các phần tử mặc định */
+        body * {
+          visibility: hidden;
+        }
+
+        /* Chỉ hiển thị khu vực in và các phần tử con của nó */
+        #printable-area, #printable-area * {
+          visibility: visible;
+        }
+        
+        /* Đảm bảo in không có màu nền, không có bóng đổ và chữ màu đen */
+        #printable-area, #printable-area * {
+            color: #000 !important;
+            background: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Đặt khu vực in ở góc trên cùng bên trái */
+        #printable-area {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          margin: 0;
+          padding: 0 5px !important;
+          border: none;
+        }
+
+        /* Reset grid layout used for desktop view */
+        #printable-area.lg\:grid {
+            display: block !important;
+        }
+        
+        /* Thiết lập lại padding và margin cơ bản */
+        #printable-area div, #printable-area p, #printable-area label, #printable-area h1 {
+          padding: 1px 0 !important;
+          margin: 0 !important;
+        }
+        
+        #printable-area .mb-6 {
+            margin-bottom: 8px !important;
+        }
+
+        /* Định dạng input và textarea để chỉ hiển thị giá trị */
+        #printable-area input, #printable-area textarea {
+          border: none !important;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          padding: 0 !important;
+          font-weight: bold;
+        }
+        
+        /* --- Summary Section Styling for Printing --- */
+        
+        /* General rule for all summary rows (Người kiểm, ERP, Actual, Difference) */
+        #printable-area .print-auditor-row,
+        #printable-area .space-y-3 > div {
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          align-items: baseline !important;
+          padding: 2px 0 !important;
+        }
+
+        /* Style for all labels within the summary rows */
+        #printable-area .print-auditor-row > label,
+        #printable-area .space-y-3 > div > label,
+        #printable-area .space-y-3 > div > p:first-child {
+          width: auto !important;
+          margin-bottom: 0 !important;
+          white-space: nowrap;
+          flex-shrink: 0;
+          padding-right: 1em !important; /* Add space between label and value */
+        }
+
+        /* Style for all input/value fields within the summary rows */
+        #printable-area .print-auditor-row > input,
+        #printable-area .space-y-3 > div > input,
+        #printable-area .space-y-3 > div > p:last-child {
+          text-align: right !important;
+          flex-grow: 1 !important;
+          width: auto !important; /* Let flexbox handle width */
+        }
+        
+        /* --- Notes Section Styling --- */
+        #printable-area label[for="notes"] {
+            font-weight: 600 !important; /* Make "Ghi chú:" bold */
+            margin-bottom: 2px !important;
+        }
+
+        #printable-area textarea {
+            height: auto !important;
+            min-height: 20px !important;
+            font-weight: normal !important; /* Notes don't need to be bold */
+            width: 100% !important;
+        }
+
+        /* Định dạng bảng */
+        #printable-area table {
+          width: 100% !important;
+          font-size: 9pt;
+          table-layout: fixed;
+          margin-top: 8px !important; /* Add space above table */
+        }
+        
+        #printable-area th, #printable-area td {
+          padding: 2px 1px !important;
+          border: none !important;
+          border-bottom: 1px dashed #ccc;
+        }
+        
+        #printable-area thead th {
+          border-bottom: 1px solid #000;
+          font-weight: 600;
+          text-transform: none;
+        }
+
+        /* [FIX 1] Thiết lập chiều rộng cột cho bảng để tránh tràn lề phải */
+        #printable-area table th:nth-child(1), #printable-area table td:nth-child(1) { width: 30%; text-align: right; }
+        #printable-area table th:nth-child(2), #printable-area table td:nth-child(2) { width: 20%; text-align: center; }
+        #printable-area table th:nth-child(3), #printable-area table td:nth-child(3) { width: 50%; text-align: right; }
+        #printable-area table input[type="text"] { text-align: center !important; }
+
+        /* [FIX 3] Thêm đường gạch ngang dưới dòng Tổng cộng */
+        #printable-area tfoot tr {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            font-size: 10pt;
+        }
+        
+        /* Loại bỏ các style không cần thiết khi in */
+        #printable-area .border-l-4, #printable-area .rounded-lg {
+          border: none !important;
+          border-radius: 0 !important;
+        }
+        
+        #printable-area div[role="alert"] {
+          display: none;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1",
+    "dexie": "https://aistudiocdn.com/dexie@^4.2.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

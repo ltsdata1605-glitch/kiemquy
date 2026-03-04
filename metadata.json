@@ -1,0 +1,5 @@
+{
+  "name": "kiemquy_tools910_4.12.2025",
+  "description": "Một ứng dụng web để kiểm tra và đối chiếu quỹ tiền mặt. Hỗ trợ lưu trữ cục bộ bằng IndexedDB, in và xuất ra hình ảnh.",
+  "requestFramePermissions": []
+}
