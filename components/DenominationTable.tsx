@@ -6,6 +6,7 @@ interface DenominationTableProps {
   onCountChange: (value: number, count: number) => void;
   totalAmount: number;
   difference: number;
+  erpCash: number;
 }
 
 const DenominationTableRow: React.FC<{
@@ -66,7 +67,7 @@ const DenominationTableRow: React.FC<{
     );
 });
 
-const DenominationTable: React.FC<DenominationTableProps> = ({ denominations, onCountChange, totalAmount, difference }) => {
+const DenominationTable: React.FC<DenominationTableProps> = ({ denominations, onCountChange, totalAmount, difference, erpCash }) => {
   const formatCurrency = (value: number) => new Intl.NumberFormat('vi-VN').format(value);
 
   const getDifferenceStyles = () => {
@@ -96,6 +97,10 @@ const DenominationTable: React.FC<DenominationTableProps> = ({ denominations, on
           <tr className="bg-indigo-50 font-bold border-t-2 border-indigo-100">
             <td colSpan={2} className="p-3 text-right text-indigo-900">Tổng cộng</td>
             <td className="p-3 text-right text-xl text-indigo-700">{formatCurrency(totalAmount)}</td>
+          </tr>
+          <tr className="bg-slate-50 font-bold border-t border-slate-200">
+            <td colSpan={2} className="p-3 text-right text-slate-700">Tiền giữ ERP</td>
+            <td className="p-3 text-right text-lg text-slate-900">{formatCurrency(erpCash)}</td>
           </tr>
           <tr className={`${diffStyles.bgColor} font-bold border-t border-dashed ${diffStyles.borderColor}`}>
             <td colSpan={2} className={`p-3 text-right ${diffStyles.textColor}`}>Tiền chênh lệch</td>

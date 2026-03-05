@@ -29,10 +29,10 @@ const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSave
         whileTap={{ scale: 0.95 }}
         onClick={onClick}
         title={title}
-        className={`flex items-center justify-center h-10 w-10 rounded-xl shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-500/20 ${variants[variant]}`}
+        className={`flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl shadow-md sm:shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-500/20 ${variants[variant]}`}
         aria-label={title}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
       </motion.button>
     );
   };
@@ -46,10 +46,10 @@ const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSave
         <p className="text-slate-500 text-sm font-medium mt-1">Công cụ đối soát tiền mặt nội bộ</p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <div className="flex items-center bg-white p-1.5 border border-slate-200 rounded-2xl shadow-sm gap-2">
-          <div className="flex items-center px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100 gap-2">
-            <History className="w-4 h-4 text-slate-400" />
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 print:hidden">
+        <div className="flex items-center bg-white p-1 sm:p-1.5 border border-slate-200 rounded-xl sm:rounded-2xl shadow-sm gap-1 sm:gap-2">
+          <div className="flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-50 rounded-lg sm:rounded-xl border border-slate-100 gap-1 sm:gap-2">
+            <History className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
             <select
               ref={selectRef}
               onChange={(e) => {
@@ -60,11 +60,11 @@ const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSave
                     selectRef.current.value = '';
                   }
               }}
-              className="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer min-w-[140px]"
+              className="bg-transparent text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer min-w-[100px] sm:min-w-[140px]"
               title="Tải phiên bản"
               defaultValue=""
             >
-              <option value="" disabled>Lịch sử kiểm quỹ...</option>
+              <option value="" disabled>Lịch sử...</option>
               {savedVersions.map(version => (
                   version.id && <option key={version.id} value={version.id}>
                       {`${version.auditorName || 'Chưa tên'} - ${new Date(version.auditTimestamp).toLocaleDateString('vi-VN')}`}
@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSave
           <ActionButton onClick={onSaveVersion} icon={Save} title="Lưu phiên bản" variant="indigo" />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <ActionButton onClick={onReset} icon={RotateCcw} title="Làm lại" variant="red" />
           <ActionButton onClick={onExportImage} icon={ImageIcon} title="Xuất ảnh" />
           
@@ -88,9 +88,9 @@ const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSave
               target="_blank"
               rel="noopener noreferrer"
               title="Mở trong tab mới để in"
-              className="flex items-center justify-center h-10 w-10 bg-slate-800 text-white rounded-xl shadow-lg shadow-slate-200 hover:bg-slate-700 transition-all duration-200"
+              className="flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 bg-slate-800 text-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg shadow-slate-200 hover:bg-slate-700 transition-all duration-200"
             >
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.a>
           ) : (
             <ActionButton onClick={onPrint} icon={Printer} title="In biên bản" />

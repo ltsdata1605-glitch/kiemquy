@@ -214,6 +214,7 @@ const App: React.FC = () => {
               onCountChange={handleDenominationChange}
               totalAmount={actualCash}
               difference={difference}
+              erpCash={erpCash}
             />
           </div>
 
