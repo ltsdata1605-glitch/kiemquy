@@ -104,18 +104,58 @@ const App: React.FC = () => {
     if (!element) return;
     
     try {
+      // Add a loading state or class if needed
       element.classList.add('is-exporting');
+      
+      // Small delay to ensure any UI changes are rendered
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        logging: false,
+        onclone: (clonedDoc) => {
+          // Ensure the cloned document has the necessary styles
+          const style = clonedDoc.createElement('style');
+          style.innerHTML = `
+            .is-exporting textarea { display: none !important; }
+            .export-notes-preview { display: block !important; white-space: pre-wrap; }
+          `;
+          clonedDoc.head.appendChild(style);
+
+          // Find notes and create a readable version for the image
+          ['notes-desktop', 'notes-mobile'].forEach(id => {
+            const notesArea = clonedDoc.getElementById(id);
+            if (notesArea instanceof HTMLTextAreaElement && notesArea.value) {
+              const preview = clonedDoc.createElement('div');
+              preview.className = 'p-3 border border-slate-200 rounded-xl bg-slate-50 text-slate-700 text-sm';
+              preview.style.whiteSpace = 'pre-wrap';
+              preview.innerText = notesArea.value;
+              notesArea.parentNode?.appendChild(preview);
+              notesArea.style.display = 'none';
+            }
+          });
+        }
       });
-      const link = document.createElement('a');
-      link.download = `kiem-quy-${new Date().toISOString().split('T')[0]}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+
+      // Use toBlob for better compatibility in production
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const date = new Date().toISOString().split('T')[0];
+        link.download = `kiem-quy-910-${date}.png`;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 'image/png', 1.0);
+
     } catch (error) {
       console.error('Error exporting image:', error);
+      alert('Có lỗi khi xuất ảnh. Vui lòng thử lại hoặc chụp màn hình.');
     } finally {
       element.classList.remove('is-exporting');
     }
@@ -164,6 +204,19 @@ const App: React.FC = () => {
   }, []);
 
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const inputs = Array.from(document.querySelectorAll('input[type="text"], textarea'));
+      const currentIndex = inputs.indexOf(e.currentTarget);
+      const nextInput = inputs[currentIndex + 1];
+      if (nextInput instanceof HTMLInputElement || nextInput instanceof HTMLTextAreaElement) {
+        nextInput.focus();
+        if (nextInput instanceof HTMLInputElement) nextInput.select();
+      }
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 p-3 sm:p-6 lg:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
@@ -201,6 +254,7 @@ const App: React.FC = () => {
                  id="notes-desktop"
                  value={notes}
                  onChange={(e) => setNotes(e.target.value)}
+                 onKeyDown={handleKeyDown}
                  placeholder="Thêm ghi chú nếu cần..."
                  rows={4}
                  className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 shadow-sm bg-slate-50/50"
@@ -224,6 +278,7 @@ const App: React.FC = () => {
               id="notes-mobile"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Thêm ghi chú nếu cần..."
               rows={3}
               className="flex-grow p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 shadow-sm bg-slate-50/50"
