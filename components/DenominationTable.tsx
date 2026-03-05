@@ -47,9 +47,9 @@ const DenominationTableRow: React.FC<{
     };
 
     return (
-        <tr className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50 transition-colors duration-150">
-            <td className={`p-3 text-right ${getDenominationStyle(item.value)}`}>{formatCurrency(item.value)}</td>
-            <td className="p-3 w-32">
+        <tr className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition-colors duration-150">
+            <td className={`p-2 text-right text-xs sm:text-sm whitespace-nowrap ${getDenominationStyle(item.value)}`}>{formatCurrency(item.value)}</td>
+            <td className="p-1 text-center">
                 <input
                     type="text"
                     inputMode="numeric"
@@ -58,34 +58,27 @@ const DenominationTableRow: React.FC<{
                     value={item.count === 0 ? '' : item.count}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
-                    className="w-full p-2 text-right border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors font-bold shadow-sm"
+                    className="w-20 sm:w-24 p-1.5 text-right border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors font-bold shadow-sm text-sm export:hidden print:hidden"
                     placeholder="0"
                 />
+                <span className="hidden export:block print:block text-center font-bold text-sm">
+                    {item.count}
+                </span>
             </td>
-            <td className="p-3 text-right text-slate-600 font-bold">{formatCurrency(item.value * item.count)}</td>
+            <td className="p-2 text-right text-slate-600 font-bold text-xs sm:text-sm whitespace-nowrap">{formatCurrency(item.value * item.count)}</td>
         </tr>
     );
 });
 
 const DenominationTable: React.FC<DenominationTableProps> = ({ denominations, onCountChange, totalAmount, difference, erpCash }) => {
-  const formatCurrency = (value: number) => new Intl.NumberFormat('vi-VN').format(value);
-
-  const getDifferenceStyles = () => {
-    if (difference < 0) return { bgColor: 'bg-red-50', textColor: 'text-red-600', borderColor: 'border-red-200' };
-    if (difference > 0) return { bgColor: 'bg-blue-50', textColor: 'text-blue-600', borderColor: 'border-blue-200' };
-    return { bgColor: 'bg-green-50', textColor: 'text-green-600', borderColor: 'border-green-200' };
-  };
-
-  const diffStyles = getDifferenceStyles();
-
   return (
-    <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
-      <table className="w-full text-left border-collapse">
-        <thead className="bg-slate-100">
+    <div className="bg-white overflow-x-auto">
+      <table className="w-full max-w-md mx-auto text-left border-collapse table-auto">
+        <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
           <tr>
-            <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Mệnh giá</th>
-            <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-32">Số tờ</th>
-            <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Thành tiền</th>
+            <th className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right whitespace-nowrap w-px">Mệnh giá</th>
+            <th className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center whitespace-nowrap w-px">Số tờ</th>
+            <th className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right whitespace-nowrap">Thành tiền</th>
           </tr>
         </thead>
         <tbody>
@@ -93,20 +86,6 @@ const DenominationTable: React.FC<DenominationTableProps> = ({ denominations, on
             <DenominationTableRow key={item.value} item={item} onCountChange={onCountChange} />
           ))}
         </tbody>
-        <tfoot>
-          <tr className="bg-indigo-50 font-bold border-t-2 border-indigo-100">
-            <td colSpan={2} className="p-3 text-right text-indigo-900">Tổng cộng</td>
-            <td className="p-3 text-right text-xl text-indigo-700">{formatCurrency(totalAmount)}</td>
-          </tr>
-          <tr className="bg-slate-50 font-bold border-t border-slate-200">
-            <td colSpan={2} className="p-3 text-right text-slate-700">Tiền giữ ERP</td>
-            <td className="p-3 text-right text-lg text-slate-900">{formatCurrency(erpCash)}</td>
-          </tr>
-          <tr className={`${diffStyles.bgColor} font-bold border-t border-dashed ${diffStyles.borderColor}`}>
-            <td colSpan={2} className={`p-3 text-right ${diffStyles.textColor}`}>Tiền chênh lệch</td>
-            <td className={`p-3 text-right text-2xl ${diffStyles.textColor}`}>{formatCurrency(difference)}</td>
-          </tr>
-        </tfoot>
       </table>
     </div>
   );
