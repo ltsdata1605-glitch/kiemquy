@@ -165,8 +165,8 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-slate-50 p-3 sm:p-6 lg:p-8 font-sans">
+      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
         <Header 
             onPrint={handlePrint} 
             onExportImage={handleExportImage} 
@@ -176,31 +176,58 @@ const App: React.FC = () => {
             savedVersions={savedVersions}
             isInIframe={isInIframe}
         />
-        <main id="printable-area" ref={printRef} className="bg-white p-6 sm:p-8 rounded-xl shadow-lg mt-6 lg:grid lg:grid-cols-2 lg:gap-8 print:block print:shadow-none print:p-0">
+        
+        <main id="printable-area" ref={printRef} className="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 lg:grid lg:grid-cols-2 lg:gap-12 print:block print:shadow-none print:p-0 print:border-none">
           
           {/* Print-only Header: Appears only when printing */}
-          <div className="hidden print:block col-span-2 text-center mb-4 text-black">
-            <h2 className="text-xl font-bold">BIÊN BẢN KIỂM QUỸ - CỤM 910</h2>
-            <p className="text-sm">{`Lúc: ${new Date(auditTimestamp).toLocaleString('vi-VN')}`}</p>
+          <div className="hidden print:block col-span-2 text-center mb-6 text-black">
+            <h2 className="text-2xl font-bold uppercase tracking-tight">Biên Bản Kiểm Quỹ - Cụm 910</h2>
+            <p className="text-sm text-slate-500 mt-1">{`Thời gian: ${new Date(auditTimestamp).toLocaleString('vi-VN')}`}</p>
+            <div className="mt-4 border-b-2 border-slate-900 w-24 mx-auto"></div>
           </div>
 
-          <Summary
-            auditorName={auditorName}
-            setAuditorName={handleAuditorNameChange}
-            erpCash={erpCash}
-            setErpCash={handleErpCashChange}
-            actualCash={actualCash}
-            difference={difference}
-            notes={notes}
-            setNotes={handleNotesChange}
-            loadedVersionInfo={loadedVersionInfo}
-          />
+          <div className="space-y-6">
+            <Summary
+              auditorName={auditorName}
+              setAuditorName={handleAuditorNameChange}
+              erpCash={erpCash}
+              setErpCash={handleErpCashChange}
+              loadedVersionInfo={loadedVersionInfo}
+            />
+            
+            <div className="hidden lg:block">
+               <label htmlFor="notes-desktop" className="w-full font-semibold text-slate-800 mb-2 block">Ghi chú:</label>
+               <textarea
+                 id="notes-desktop"
+                 value={notes}
+                 onChange={(e) => setNotes(e.target.value)}
+                 placeholder="Thêm ghi chú nếu cần..."
+                 rows={4}
+                 className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 shadow-sm bg-slate-50/50"
+               />
+            </div>
+          </div>
           
-          <DenominationTable
-            denominations={denominations}
-            onCountChange={handleDenominationChange}
-            totalAmount={actualCash}
-          />
+          <div className="mt-6 lg:mt-0">
+            <DenominationTable
+              denominations={denominations}
+              onCountChange={handleDenominationChange}
+              totalAmount={actualCash}
+              difference={difference}
+            />
+          </div>
+
+          <div className="lg:hidden mt-6 flex flex-col">
+            <label htmlFor="notes-mobile" className="w-full font-semibold text-slate-800 mb-2">Ghi chú:</label>
+            <textarea
+              id="notes-mobile"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Thêm ghi chú nếu cần..."
+              rows={3}
+              className="flex-grow p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 shadow-sm bg-slate-50/50"
+            />
+          </div>
           
         </main>
         <Footer auditTimestamp={auditTimestamp} />

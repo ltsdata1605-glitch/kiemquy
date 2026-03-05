@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 import { AuditState } from '../types';
+import { Printer, Image as ImageIcon, RotateCcw, Save, History, ExternalLink } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface HeaderProps {
   onPrint: () => void;
@@ -14,108 +16,86 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onPrint, onExportImage, onReset, onSaveVersion, onLoadVersion, savedVersions, isInIframe }) => {
   const selectRef = useRef<HTMLSelectElement>(null);
 
-  const PrintButton = () => {
-    if (isInIframe) {
-      return (
-        <a
-          href={window.location.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Mở trong tab mới để in"
-          className="flex items-center justify-center h-10 w-10 text-white bg-slate-700 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
-          aria-label="Mở trong tab mới để in"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-          </svg>
-        </a>
-      );
-    }
+  const ActionButton = ({ onClick, icon: Icon, title, variant = 'slate' }: { onClick: () => void, icon: any, title: string, variant?: 'slate' | 'indigo' | 'red' }) => {
+    const variants = {
+      slate: 'bg-slate-800 hover:bg-slate-700 text-white shadow-slate-200',
+      indigo: 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200',
+      red: 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-200'
+    };
+
     return (
-      <button
-        onClick={onPrint}
-        title="In"
-        className="flex items-center justify-center h-10 w-10 text-white bg-slate-700 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
-        aria-label="In biên bản"
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onClick}
+        title={title}
+        className={`flex items-center justify-center h-10 w-10 rounded-xl shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-500/20 ${variants[variant]}`}
+        aria-label={title}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-        </svg>
-      </button>
+        <Icon className="w-5 h-5" />
+      </motion.button>
     );
   };
 
   return (
-    <header className="flex flex-wrap justify-between items-center gap-4">
-      <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">KIỂM QUỸ - CỤM 910</h1>
-      <div className="flex items-center space-x-2 print:hidden">
-        
-        {/* Versioning controls */}
-        <div className="flex items-center space-x-2">
-            <button
-                onClick={onSaveVersion}
-                title="Lưu phiên bản"
-                className="flex items-center justify-center h-10 w-10 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                aria-label="Lưu phiên bản hiện tại"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                    <polyline points="7 3 7 8 15 8"></polyline>
-                </svg>
-            </button>
+    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+      <div>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          KIỂM QUỸ <span className="text-indigo-600">CỤM 910</span>
+        </h1>
+        <p className="text-slate-500 text-sm font-medium mt-1">Công cụ đối soát tiền mặt nội bộ</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 print:hidden">
+        <div className="flex items-center bg-white p-1.5 border border-slate-200 rounded-2xl shadow-sm gap-2">
+          <div className="flex items-center px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100 gap-2">
+            <History className="w-4 h-4 text-slate-400" />
             <select
-                ref={selectRef}
-                onChange={(e) => {
-                    if (e.target.value) {
-                      onLoadVersion(e.target.value);
-                    }
-                    if (selectRef.current) {
-                      selectRef.current.value = '';
-                    }
-                }}
-                className="h-10 px-3 bg-white border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                title="Tải phiên bản"
-                defaultValue=""
-                aria-label="Chọn một phiên bản để tải"
+              ref={selectRef}
+              onChange={(e) => {
+                  if (e.target.value) {
+                    onLoadVersion(e.target.value);
+                  }
+                  if (selectRef.current) {
+                    selectRef.current.value = '';
+                  }
+              }}
+              className="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer min-w-[140px]"
+              title="Tải phiên bản"
+              defaultValue=""
             >
-                <option value="" disabled>Tải phiên bản...</option>
-                {savedVersions.map(version => (
-                    version.id && <option key={version.id} value={version.id}>
-                        {`${version.auditorName || 'Chưa đặt tên'} - ${new Date(version.auditTimestamp).toLocaleString('vi-VN')}`}
-                    </option>
-                ))}
+              <option value="" disabled>Lịch sử kiểm quỹ...</option>
+              {savedVersions.map(version => (
+                  version.id && <option key={version.id} value={version.id}>
+                      {`${version.auditorName || 'Chưa tên'} - ${new Date(version.auditTimestamp).toLocaleDateString('vi-VN')}`}
+                  </option>
+              ))}
             </select>
+          </div>
+          
+          <ActionButton onClick={onSaveVersion} icon={Save} title="Lưu phiên bản" variant="indigo" />
         </div>
 
-        <div className="h-8 border-l border-slate-300 mx-1"></div>
-        
-        {/* Action buttons */}
-        <button
-            onClick={onReset}
-            title="Làm lại"
-            className="flex items-center justify-center h-10 w-10 text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-            aria-label="Làm lại từ đầu"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                <path d="M21 3v5h-5"></path>
-                <path d="M3 12a9 9 0 0 1 9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                <path d="M3 21v-5h5"></path>
-            </svg>
-        </button>
-        <button
-            onClick={onExportImage}
-            title="Xuất ảnh"
-            className="flex items-center justify-center h-10 w-10 text-white bg-slate-700 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
-            aria-label="Xuất ra hình ảnh"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-                <circle cx="12" cy="13" r="3"></circle>
-            </svg>
-        </button>
-        <PrintButton />
+        <div className="flex items-center gap-2">
+          <ActionButton onClick={onReset} icon={RotateCcw} title="Làm lại" variant="red" />
+          <ActionButton onClick={onExportImage} icon={ImageIcon} title="Xuất ảnh" />
+          
+          {isInIframe ? (
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href={window.location.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Mở trong tab mới để in"
+              className="flex items-center justify-center h-10 w-10 bg-slate-800 text-white rounded-xl shadow-lg shadow-slate-200 hover:bg-slate-700 transition-all duration-200"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </motion.a>
+          ) : (
+            <ActionButton onClick={onPrint} icon={Printer} title="In biên bản" />
+          )}
+        </div>
       </div>
     </header>
   );

@@ -14,9 +14,9 @@ const Footer: React.FC<FooterProps> = ({ auditTimestamp }) => {
   });
 
   return (
-    <footer className="text-center text-xs text-slate-400 mt-8 print:hidden">
-      <p>Kiểm lúc: {formattedTimestamp}</p>
-      <p>Version: 1.0.0 - 2024</p>
+    <footer className="text-center text-xs text-slate-400 mt-8 mb-4 print:hidden">
+      <p className="font-medium">Cập nhật lúc: {formattedTimestamp}</p>
+      <p className="mt-1 opacity-75">Biên Bản Kiểm Quỹ - Cụm 910</p>
     </footer>
   );
 };
